@@ -1,30 +1,26 @@
 from bs4 import BeautifulSoup # type: ignore
 import re
 """This program was built to make quick, easy README.md files.
-Just inspect the page of the project, copy the 'project row container-max'
-element, and paste it to a file of your choice.
+See the README.md for usage info.
 
 DO NOT FORGET TO ADJUST THE FILEPATH USED IN THIS PROGRAM
-
-Returns:
-    `_type_`: _description_
 """
 
-class HtmlToMarkdown:
+class HtmlToMarkdown:  # Class for converted object
     def __init__(self):
         self.list_depth = 0
     
-    def convert(self, html):
+    def convert(self, html):  #Convert method
         soup = BeautifulSoup(html, 'html.parser')
         return self.process_node(soup).strip()
     
-    def process_node(self, node):
+    def process_node(self, node):  # processes node to retrieve content
         if node.name is None:
             return node.string or ''
         
         content = ''.join(self.process_node(child) for child in node.children)
         
-        handlers = {
+        handlers = {  # translate html hierarchy to markdown
             'h1': lambda x: f'\n# {x}\n\n',
             'h2': lambda x: f'\n## {x}\n\n',
             'h3': lambda x: f'\n### {x}\n\n',
@@ -43,31 +39,31 @@ class HtmlToMarkdown:
             'br': lambda x: '\n',
         }
         
-        if node.name in handlers:
+        if node.name in handlers:  # handling embedding images and links
             return handlers[node.name](content)
         
-        if node.name == 'a':
+        if node.name == 'a':  # Link format converter
             href = node.get('href', '')
             return f'[{content}]({href})'
         
-        if node.name == 'img':
+        if node.name == 'img':  # Img include converter
             src = node.get('src', '')
             alt = node.get('alt', '')
             return f'![{alt}]({src})'
         
-        if node.name in ('ul', 'ol'):
+        if node.name in ('ul', 'ol'):  # Lists handler
             self.list_depth += 1
             marker = '1.' if node.name == 'ol' else '*'
             result = self.process_list(node, marker)
             self.list_depth -= 1
             return result
         
-        if node.name == 'table':
+        if node.name == 'table':  # Table handler if any
             return self.process_table(node)
         
         return content
     
-    def process_list(self, node, marker):
+    def process_list(self, node, marker):  # Handles lists items
         result = '\n'
         for item in node.find_all('li', recursive=False):
             indent = '  ' * (self.list_depth - 1)
@@ -75,7 +71,7 @@ class HtmlToMarkdown:
             result += f'{indent}{marker} {item_content}\n'
         return result + '\n'
     
-    def process_table(self, table):
+    def process_table(self, table):  # Handles table rows
         result = '\n'
         rows = table.find_all('tr')
         
@@ -103,8 +99,7 @@ class HtmlToMarkdown:
 
 def replace_between_markers(markdown_string, patterns):
     """
-    Replace content between markers in a file, handling both literal and regex 
-    patterns. Also escapes tilde characters for markdown.
+    Replaces regex patterns to refine markdown page.
     """
     try:
         # Handle regex patterns
@@ -137,7 +132,7 @@ patterns = [
 
 # Apply to file
 if __name__ == '__main__':
-    file_path = "C:\\Users\\julia\\Desktop\\readme.txt"
+    file_path = "PATH_TO_FILE"
     try:
         with open(file_path, "r", encoding="utf-8") as file:
             html_str = file.read()
