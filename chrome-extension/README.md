@@ -19,7 +19,7 @@ A Chrome extension that helps Holberton students quickly generate README.md file
 1. Clone this repository:
 
 ```bash
-git clone https://github.com/yourusername/holberton-markdown-extension.git
+git clone https://github.com/yourusername/HB-README.md-files.git
 ```
 
 2. Open Chrome and navigate to `chrome://extensions/`
