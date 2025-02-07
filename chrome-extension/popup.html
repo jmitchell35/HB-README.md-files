@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>HTML to Markdown Converter</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>HTML to Markdown</h1>
+      <button id="scanButton" class="button">Scan Page</button>
+      <div id="resultActions" style="display: none">
+        <button id="saveButton" class="button">Save to README.md</button>
+        <button id="copyButton" class="button">Copy to Clipboard</button>
+      </div>
+      <div id="status" class="status"></div>
+    </div>
+    <script src="node_modules/turndown/dist/turndown.js"></script>
+    <script type="module" src="src/popup.js"></script>
+  </body>
+</html>

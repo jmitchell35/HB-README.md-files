@@ -1,4 +1,4 @@
-from bs4 import BeautifulSoup # type: ignore
+from bs4 import BeautifulSoup  # type: ignore
 import re
 """This program was built to make quick, easy README.md files.
 See the README.md for usage info.
@@ -6,20 +6,21 @@ See the README.md for usage info.
 DO NOT FORGET TO ADJUST THE FILEPATH USED IN THIS PROGRAM
 """
 
+
 class HtmlToMarkdown:  # Class for converted object
     def __init__(self):
         self.list_depth = 0
-    
-    def convert(self, html):  #Convert method
+
+    def convert(self, html):  # Convert method
         soup = BeautifulSoup(html, 'html.parser')
         return self.process_node(soup).strip()
-    
+
     def process_node(self, node):  # processes node to retrieve content
         if node.name is None:
             return node.string or ''
-        
+
         content = ''.join(self.process_node(child) for child in node.children)
-        
+
         handlers = {  # translate html hierarchy to markdown
             'h1': lambda x: f'\n# {x}\n\n',
             'h2': lambda x: f'\n## {x}\n\n',
@@ -38,31 +39,31 @@ class HtmlToMarkdown:  # Class for converted object
             'hr': lambda x: '\n---\n\n',
             'br': lambda x: '\n',
         }
-        
+
         if node.name in handlers:  # handling embedding images and links
             return handlers[node.name](content)
-        
+
         if node.name == 'a':  # Link format converter
             href = node.get('href', '')
             return f'[{content}]({href})'
-        
+
         if node.name == 'img':  # Img include converter
             src = node.get('src', '')
             alt = node.get('alt', '')
             return f'![{alt}]({src})'
-        
+
         if node.name in ('ul', 'ol'):  # Lists handler
             self.list_depth += 1
             marker = '1.' if node.name == 'ol' else '*'
             result = self.process_list(node, marker)
             self.list_depth -= 1
             return result
-        
+
         if node.name == 'table':  # Table handler if any
             return self.process_table(node)
-        
+
         return content
-    
+
     def process_list(self, node, marker):  # Handles lists items
         result = '\n'
         for item in node.find_all('li', recursive=False):
@@ -70,32 +71,33 @@ class HtmlToMarkdown:  # Class for converted object
             item_content = self.process_node(item).strip()
             result += f'{indent}{marker} {item_content}\n'
         return result + '\n'
-    
+
     def process_table(self, table):  # Handles table rows
         result = '\n'
         rows = table.find_all('tr')
-        
+
         if not rows:
             return result
-        
+
         # Process header
         header_cells = rows[0].find_all(['th', 'td'])
-        header = ' | '.join(self.process_node(cell).strip() 
+        header = ' | '.join(self.process_node(cell).strip()
                             for cell in header_cells)
         result += f'| {header} |\n'
-        
+
         # Add separator
         separator = ' | '.join(['---'] * len(header_cells))
         result += f'| {separator} |\n'
-        
+
         # Process body
         for row in rows[1:]:
             cells = row.find_all('td')
-            row_content = ' | '.join(self.process_node(cell).strip() 
+            row_content = ' | '.join(self.process_node(cell).strip()
                                      for cell in cells)
             result += f'| {row_content} |\n'
-        
+
         return result + '\n'
+
 
 def replace_between_markers(markdown_string, patterns):
     """
@@ -106,15 +108,16 @@ def replace_between_markers(markdown_string, patterns):
         for pattern, replacement in patterns:
             markdown_string = re.sub(
                 pattern, replacement, markdown_string, flags=re.DOTALL)
-        
+
         # Clean up any remaining whitespace
         markdown_string = re.sub(r'\n{3,}', '\n\n', markdown_string)
-   
+
         return markdown_string
-    
+
     except Exception as e:
         print(f"An error occurred: {e}")
         return None
+
 
 patterns = [
     (r"(\!\[Project badge\].*?\n)", ""),  # project picture
@@ -138,10 +141,10 @@ if __name__ == '__main__':
             html_str = file.read()
     except Exception as e:
         print(f"An error occurred: {e}")
-    
+
     converter = HtmlToMarkdown()
     markdown = converter.convert(html_str)
-    
+
     markdown = replace_between_markers(markdown, patterns)
     try:
         if markdown != None:
