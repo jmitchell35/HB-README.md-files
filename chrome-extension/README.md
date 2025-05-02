@@ -14,6 +14,21 @@ A Chrome extension that helps Holberton students quickly generate README.md file
 - Option to save directly as README.md
 - Copy to clipboard functionality
 
+## Development
+
+### Prerequisites
+
+- Node.js and npm installed
+- Chrome browser
+
+### Setup for Development
+
+1. Install dependencies:
+
+```bash
+npm install turndown
+```
+
 ## Installation
 
 1. Clone this repository:
@@ -43,21 +58,6 @@ git clone https://github.com/yourusername/HB-README.md-files.git
 - Vanilla JavaScript for functionality
 - TurndownJS for HTML to Markdown conversion
 - Chrome Extension APIs
-
-## Development
-
-### Prerequisites
-
-- Node.js and npm installed
-- Chrome browser
-
-### Setup for Development
-
-1. Install dependencies:
-
-```bash
-npm install turndown
-```
 
 ## License
 
